@@ -34,7 +34,7 @@ semantic-search/ ├── app.py # Flask application entry point ├── requ
 ## 🧪 Setup & Run Instructions
 
 ### 1. Clone the Repository
-```bash
+bash
 git clone https://github.com/your-username/semantic-search.git
 cd semantic-search
 
