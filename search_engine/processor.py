@@ -22,3 +22,4 @@ def semantic_search(query, chunks, embeddings, top_k=3):
         {"text": chunk, "score": round(float(score), 4)}
         for chunk, score in results
     ]
+#hi
