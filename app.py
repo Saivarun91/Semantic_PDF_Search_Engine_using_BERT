@@ -1,31 +1,19 @@
-from flask import Flask, request, jsonify, render_template
-from search_engine.processor import load_and_chunk_text
-from search_engine.embedder import get_embeddings
-from search_engine.searcher import build_faiss_index, search
-import os
+from flask import Flask, render_template, request
+from search_engine.processor import load_and_process_document, semantic_search
+from search_engine.utils import highlight_keywords
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEMPLATE_DIR = os.path.join(BASE_DIR, "frontend")
-STATIC_DIR = os.path.join(TEMPLATE_DIR, "static")
+app = Flask(__name__)
 
-app = Flask(__name__, template_folder=TEMPLATE_DIR, static_folder=STATIC_DIR)
+# Load the document chunks and embeddings at startup
+chunks, embeddings = load_and_process_document("data/sample.pdf")
 
-docs = load_and_chunk_text("data/sample.pdf")
-doc_embeddings, model = get_embeddings(docs)
-index = build_faiss_index(doc_embeddings)
+@app.route("/", methods=["GET", "POST"])
+def index():
+    results = []
+    if request.method == "POST":
+        query = request.form["query"]
+        results = semantic_search(query, chunks, embeddings)
+    return render_template("index.html", results=results)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/search", methods=["POST"])
-def semantic_search():
-    query = request.json.get("query")
-    if not query:
-        return jsonify({"error": "No query provided"}), 400
-
-    results = search(query, model, index, docs)
-    return jsonify(results)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

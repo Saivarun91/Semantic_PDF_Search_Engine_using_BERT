@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Semantic Search</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Semantic Search Engine</h1>
+        <form method="post">
+            <input type="text" name="query" placeholder="Ask a question..." required>
+            <button type="submit">Search</button>
+        </form>
+        {% if results %}
+        <div class="results">
+            {% for r in results %}
+            <div class="result">
+                <p><strong>Score:</strong> {{ r.score }}</p>
+                <p>{{ r.text|safe }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
